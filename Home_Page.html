@@ -544,11 +544,11 @@
             <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">☰</button>
             <nav class="main-nav" id="mainNav">
                 <ul>
-                    <li><a href="index.html" class="active">首页</a></li>
+                    <li><a href="Home_Page.html" class="active">首页</a></li>
                     <li><a href="about.html">学校简介</a></li>
                     <li><a href="courses.html">课程设置</a></li>
                     <li><a href="bulletin.html">公告栏</a></li>
-                    <li><a href="teachers.html">教师团队</a></li>
+                    <li><a href="Teacher.html">教师团队</a></li>
                     <li><a href="register.html">报名</a></li>
                 </ul>
             </nav>
@@ -602,7 +602,7 @@
                         <a href="about.html" class="btn btn-outline" style="margin-top:16px;">阅读更多</a>
                     </div>
                     <div class="intro-image">
-                        <img src="Assets/about.jpg" alt="课堂照片">
+                        <img src="Assets/2周年校庆/Lyngby中文学校-407-scaled.jpg" alt="课堂照片">
                     </div>
                 </div>
             </div>
@@ -757,4 +757,55 @@
 
     <!-- ========== FOOTER ========== -->
     <footer class="site-footer">
-        <div class
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="logo-text" style="color:#fff; font-family:var(--font-serif); font-size:1.3rem; font-weight:700;">
+                        灵比中文学校
+                        <small style="color:rgba(255,255,255,0.5);">Lyngby Chinese School</small>
+                    </div>
+                    <p>语言连世界 · 文化伴成长</p>
+                </div>
+                <div class="footer-col">
+                    <h4>快速链接</h4>
+                    <ul>
+                        <li><a href="about.html">学校简介</a></li>
+                        <li><a href="courses.html">课程设置</a></li>
+                        <li><a href="bulletin.html">公告栏</a></li>
+                        <li><a href="Teacher.html">教师团队</a></li>
+                        <li><a href="register.html">报名</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>联系我们</h4>
+                    <ul>
+                        <li><a href="mailto:info@zhongwen.dk">info@zhongwen.dk</a></li>
+                        <li><a href="https://zhongwen.dk">zhongwen.dk</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <span>© 2025 灵比中文学校 · Lyngby Chinese School</span>
+                <span class="slogan">语言连世界 · 文化伴成长</span>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile nav toggle
+        const navToggle = document.getElementById('navToggle');
+        const mainNav = document.getElementById('mainNav');
+        if (navToggle) {
+            navToggle.addEventListener('click', () => {
+                mainNav.classList.toggle('open');
+            });
+        }
+        // Close nav when clicking a link (mobile)
+        document.querySelectorAll('.main-nav a').forEach(link => {
+            link.addEventListener('click', () => {
+                mainNav.classList.remove('open');
+            });
+        });
+    </script>
+</body>
+</html>
