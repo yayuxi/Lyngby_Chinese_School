@@ -138,26 +138,40 @@
         .page-header h1 { color: #fff; font-size: 2.6rem; margin-bottom: 8px; }
         .page-header p { color: rgba(255,255,255,0.85); font-size: 1.05rem; }
 
-        /* ---------- BULLETIN LIST ---------- */
+        /* ---------- BULLETIN ACCORDION ---------- */
         .bulletin-list {
-            max-width: 860px;
+            max-width: 900px;
             margin: 0 auto;
         }
 
         .bulletin-item {
-            display: flex;
-            gap: 24px;
             background: #fff;
             border-radius: var(--radius);
-            padding: 24px;
             margin-bottom: 20px;
             border-left: 5px solid var(--primary-red);
             box-shadow: var(--shadow-sm);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            transition: box-shadow 0.25s ease;
+            overflow: hidden;
         }
         .bulletin-item:hover {
-            transform: translateX(4px);
             box-shadow: var(--shadow-md);
+        }
+        .bulletin-item.open {
+            box-shadow: var(--shadow-md);
+        }
+
+        .bulletin-header {
+            display: flex;
+            gap: 24px;
+            padding: 24px;
+            cursor: pointer;
+            align-items: center;
+            user-select: none;
+            transition: background 0.2s ease;
+            position: relative;
+        }
+        .bulletin-header:hover {
+            background: #fdf8f5;
         }
 
         .bulletin-thumb {
@@ -180,25 +194,106 @@
             object-fit: cover;
         }
 
-        .bulletin-content {
+        .bulletin-meta {
             flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
         }
-
-        .bulletin-content h3 {
+        .bulletin-meta h3 {
             font-size: 1.15rem;
             margin-bottom: 6px;
             color: var(--primary-red-dark);
             line-height: 1.4;
         }
-
-        .bulletin-content .date {
+        .bulletin-meta .date {
             font-size: 0.85rem;
             color: var(--text-muted);
             font-weight: 500;
             letter-spacing: 0.03em;
+        }
+
+        .bulletin-toggle-icon {
+            font-size: 1.6rem;
+            color: var(--primary-red);
+            flex-shrink: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(178, 34, 34, 0.06);
+            transition: transform 0.3s ease, background 0.2s ease;
+            line-height: 1;
+            font-weight: 400;
+        }
+        .bulletin-header:hover .bulletin-toggle-icon {
+            background: rgba(178, 34, 34, 0.12);
+        }
+        .bulletin-item.open .bulletin-toggle-icon {
+            transform: rotate(45deg);
+        }
+
+        /* ---------- BULLETIN BODY (expanded) ---------- */
+        .bulletin-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.45s ease, padding 0.3s ease;
+            padding: 0 24px;
+            background: #fff;
+        }
+        .bulletin-item.open .bulletin-body {
+            max-height: 3000px;
+            padding: 0 24px 32px 24px;
+        }
+
+        .bulletin-body-inner {
+            border-top: 1px solid var(--border-light);
+            padding-top: 24px;
+        }
+
+        .bulletin-body p {
+            color: var(--text-muted);
+            font-size: 0.98rem;
+            margin-bottom: 16px;
+            line-height: 1.8;
+        }
+        .bulletin-body p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Photo gallery inside expanded event */
+        .event-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 12px;
+            margin-top: 20px;
+        }
+        .event-gallery-item {
+            aspect-ratio: 4 / 3;
+            border-radius: var(--radius-sm);
+            background: #f0e6df;
+            border: 2px dashed var(--primary-red);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            color: var(--primary-red);
+            font-size: 1.4rem;
+            transition: transform 0.2s ease;
+        }
+        .event-gallery-item:hover {
+            transform: scale(1.02);
+        }
+        .event-gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .event-gallery-caption {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 8px;
+            font-style: italic;
         }
 
         /* ---------- CTA / SUBSCRIBE ---------- */
@@ -283,13 +378,29 @@
             .site-header { position: relative; }
         }
         @media (max-width: 640px) {
-            .bulletin-item {
+            .bulletin-header {
                 flex-direction: column;
-                gap: 16px;
+                text-align: center;
+                gap: 12px;
+                padding: 20px;
             }
             .bulletin-thumb {
                 width: 100%;
                 height: 180px;
+            }
+            .bulletin-toggle-icon {
+                position: absolute;
+                top: 16px;
+                right: 16px;
+            }
+            .bulletin-body {
+                padding: 0 20px;
+            }
+            .bulletin-item.open .bulletin-body {
+                padding: 0 20px 24px 20px;
+            }
+            .event-gallery {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
             }
         }
         @media (max-width: 520px) {
@@ -302,8 +413,7 @@
             .logo-text { font-size: 1.2rem; }
             .logo-placeholder { width: 48px; height: 48px; font-size: 1.3rem; }
             .page-header h1 { font-size: 2rem; }
-            .bulletin-item { padding: 20px; }
-            .bulletin-content h3 { font-size: 1.05rem; }
+            .bulletin-meta h3 { font-size: 1.05rem; }
         }
     </style>
 </head>
@@ -313,10 +423,7 @@
     <header class="site-header">
         <div class="container header-inner">
             <div class="logo-area">
-                <div class="logo-placeholder">
-                    <!-- <img src="Assets/logo.png" alt="灵比中文学校 Logo"> -->
-                    灵
-                </div>
+                <img src="Assets/logo.png" alt="灵比中文学校 Logo" width="60" height="60">
                 <div class="logo-text">
                     灵比中文学校
                     <small>Lyngby Chinese School</small>
@@ -345,65 +452,151 @@
             </div>
         </section>
 
-        <!-- ========== BULLETIN LIST ========== -->
+        <!-- ========== BULLETIN ACCORDION ========== -->
         <section class="section">
             <div class="container">
                 <div class="bulletin-list">
 
                     <!-- Bulletin 1 -->
-                    <a href="#" class="bulletin-item">
-                        <div class="bulletin-thumb">
-                            <img src="Assets/Bulletin/2026summer.jpg" alt="2026夏季开学通知">
+                    <div class="bulletin-item">
+                        <div class="bulletin-header">
+                            <div class="bulletin-thumb">
+                                <img src="Assets/Bulletin/2026summer.jpg" alt="2026夏季开学通知">
+                            </div>
+                            <div class="bulletin-meta">
+                                <h3>2026夏季开学通知</h3>
+                                <div class="date">August 2, 2026</div>
+                            </div>
+                            <div class="bulletin-toggle-icon">+</div>
                         </div>
-                        <div class="bulletin-content">
-                            <h3>2026夏季开学通知</h3>
-                            <div class="date">August 2, 2026</div>
+                        <div class="bulletin-body">
+                            <div class="bulletin-body-inner">
+                                <p>亲爱的家长和同学们：</p>
+                                <p>2026年夏季学期将于8月正式开学，具体上课时间和班级安排请关注后续通知。请各位家长提前为孩子做好开学准备，确保按时到校。</p>
+                                <p>新学期，新起点，期待与大家再次相聚在灵比中文学校的课堂！</p>
+                                <div class="event-gallery">
+                                    <!-- Replace with actual event photos -->
+                                    <div class="event-gallery-item"><img src="Assets/Bulletin/2026summer-1.jpg" alt="开学照片1"></div>
+                                    <div class="event-gallery-item"><img src="Assets/Bulletin/2026summer-2.jpg" alt="开学照片2"></div>
+                                    <div class="event-gallery-item"><img src="Assets/Bulletin/2026summer-3.jpg" alt="开学照片3"></div>
+                                    <div class="event-gallery-item"><img src="Assets/Bulletin/2026summer-4.jpg" alt="开学照片4"></div>
+                                </div>
+                                <p class="event-gallery-caption">开学典礼精彩瞬间</p>
+                            </div>
                         </div>
-                    </a>
+                    </div>
 
                     <!-- Bulletin 2 -->
-                    <a href="#" class="bulletin-item">
-                        <div class="bulletin-thumb">
-                            <img src="Assets/Bulletin/2nd-anniversary.jpg" alt="灵比中文学校2周年校庆">
+                    <div class="bulletin-item">
+                        <div class="bulletin-header">
+                            <div class="bulletin-thumb">
+                                <img src="Assets/Bulletin/2nd-anniversary.jpg" alt="灵比中文学校2周年校庆">
+                            </div>
+                            <div class="bulletin-meta">
+                                <h3>灵比中文学校2周年校庆</h3>
+                                <div class="date">March 10, 2026</div>
+                            </div>
+                            <div class="bulletin-toggle-icon">+</div>
                         </div>
-                        <div class="bulletin-content">
-                            <h3>灵比中文学校2周年校庆</h3>
-                            <div class="date">March 10, 2026</div>
+                        <div class="bulletin-body">
+                            <div class="bulletin-body-inner">
+                                <p>灵比中文学校迎来了两周年校庆！感谢各位家长、老师和同学们一直以来的支持与陪伴。</p>
+                                <p>校庆活动中，同学们带来了精彩的文艺表演，家长们也积极参与其中，共同庆祝这个特别的日子。让我们一起回顾那些温馨而欢乐的瞬间。</p>
+                                <div class="event-gallery">
+                                    <div class="event-gallery-item"><img src="Assets/2周年校庆/d9eaced8b614fb22fe46ad96d99115c-scaled.jpg" alt="校庆照片1"></div>
+                                    <div class="event-gallery-item"><img src="Assets/2周年校庆/Lyngby中文学校-139-scaled.jpg" alt="校庆照片2"></div>
+                                    <div class="event-gallery-item"><img src="Assets/2周年校庆/Lyngby中文学校-213-1536x1024.jpg" alt="校庆照片3"></div>
+                                    <div class="event-gallery-item"><img src="Assets/2周年校庆/Lyngby中文学校-233-1536x1024.jpg" alt="校庆照片4"></div>
+                                    <div class="event-gallery-item"><img src="Assets/2周年校庆/Lyngby中文学校-272-1536x1024.jpg" alt="校庆照片5"></div>
+                                    <div class="event-gallery-item"><img src="Assets/2周年校庆/Lyngby中文学校-282-1536x1024.jpg" alt="校庆照片6"></div>
+                                    <div class="event-gallery-item"><img src="Assets/2周年校庆/Lyngby中文学校-366-1536x1024.jpg" alt="校庆照片5"></div>
+                                    <div class="event-gallery-item"><img src="Assets/2周年校庆/Lyngby中文学校-402-1536x1024.jpg" alt="校庆照片6"></div>
+                                </div>
+                                <p class="event-gallery-caption">两周年校庆活动现场</p>
+                            </div>
                         </div>
-                    </a>
+                    </div>
 
                     <!-- Bulletin 3 -->
-                    <a href="#" class="bulletin-item">
-                        <div class="bulletin-thumb">
-                            <img src="Assets/Bulletin/2025summer.jpg" alt="2025夏季开学典礼">
+                    <div class="bulletin-item">
+                        <div class="bulletin-header">
+                            <div class="bulletin-thumb">
+                                <img src="Assets/Bulletin/2025summer.jpg" alt="2025夏季开学典礼">
+                            </div>
+                            <div class="bulletin-meta">
+                                <h3>2025夏季开学典礼</h3>
+                                <div class="date">August 18, 2025</div>
+                            </div>
+                            <div class="bulletin-toggle-icon">+</div>
                         </div>
-                        <div class="bulletin-content">
-                            <h3>2025夏季开学典礼</h3>
-                            <div class="date">August 18, 2025</div>
+                        <div class="bulletin-body">
+                            <div class="bulletin-body-inner">
+                                <p>2025年夏季学期开学典礼圆满举行。新老同学们齐聚一堂，共同开启新学期的中文学习之旅。</p>
+                                <p>典礼上，老师们介绍了本学期的课程安排和教学目标，同学们也通过破冰活动迅速融入了新的班级集体。</p>
+                                <div class="event-gallery">
+                                    <div class="event-gallery-item"><img src="Assets/Bulletin/2025summer-1.jpg" alt="开学典礼1"></div>
+                                    <div class="event-gallery-item"><img src="Assets/Bulletin/2025summer-2.jpg" alt="开学典礼2"></div>
+                                    <div class="event-gallery-item"><img src="Assets/Bulletin/2025summer-3.jpg" alt="开学典礼3"></div>
+                                </div>
+                                <p class="event-gallery-caption">开学典礼现场</p>
+                            </div>
                         </div>
-                    </a>
+                    </div>
 
                     <!-- Bulletin 4 -->
-                    <a href="#" class="bulletin-item">
-                        <div class="bulletin-thumb">
-                            <img src="Assets/Bulletin/dragonboat2025.jpg" alt="灵比中文学校闪耀2025丹麦龙舟节">
+                    <div class="bulletin-item">
+                        <div class="bulletin-header">
+                            <div class="bulletin-thumb">
+                                <img src="Assets/Bulletin/dragonboat2025.jpg" alt="灵比中文学校闪耀2025丹麦龙舟节">
+                            </div>
+                            <div class="bulletin-meta">
+                                <h3>灵比中文学校闪耀2025丹麦龙舟节 ——传统与激情同“舟”共振，校园风采尽展运河之畔！</h3>
+                                <div class="date">June 24, 2025</div>
+                            </div>
+                            <div class="bulletin-toggle-icon">+</div>
                         </div>
-                        <div class="bulletin-content">
-                            <h3>灵比中文学校闪耀2025丹麦龙舟节 ——传统与激情同“舟”共振，校园风采尽展运河之畔！</h3>
-                            <div class="date">June 24, 2025</div>
+                        <div class="bulletin-body">
+                            <div class="bulletin-body-inner">
+                                <p>2025年丹麦龙舟节上，灵比中文学校的师生和家长们组成了一支充满活力的队伍，在运河之上展现了中华传统文化的魅力与团队精神。</p>
+                                <p>从赛前训练到正式比赛，大家齐心协力、奋勇拼搏，不仅收获了掌声与友谊，更让中华文化在丹麦的土地上绽放光彩。</p>
+                                <div class="event-gallery">
+                                    <div class="event-gallery-item"><img src="Assets/Bulletin/dragonboat-1.jpg" alt="龙舟节照片1"></div>
+                                    <div class="event-gallery-item"><img src="Assets/Bulletin/dragonboat-2.jpg" alt="龙舟节照片2"></div>
+                                    <div class="event-gallery-item"><img src="Assets/Bulletin/dragonboat-3.jpg" alt="龙舟节照片3"></div>
+                                    <div class="event-gallery-item"><img src="Assets/Bulletin/dragonboat-4.jpg" alt="龙舟节照片4"></div>
+                                </div>
+                                <p class="event-gallery-caption">龙舟节精彩瞬间</p>
+                            </div>
                         </div>
-                    </a>
+                    </div>
 
                     <!-- Bulletin 5 -->
-                    <a href="#" class="bulletin-item">
-                        <div class="bulletin-thumb">
-                            <img src="Assets/Bulletin/badminton2025.jpg" alt="2025年灵比中文学校羽毛球趣味活动">
+                    <div class="bulletin-item">
+                        <div class="bulletin-header">
+                            <div class="bulletin-thumb">
+                                <img src="Assets/Bulletin/badminton2025.jpg" alt="2025年灵比中文学校羽毛球趣味活动">
+                            </div>
+                            <div class="bulletin-meta">
+                                <h3>2025年灵比中文学校羽毛球趣味活动精彩回顾——活力绽放的周末午后</h3>
+                                <div class="date">May 18, 2025</div>
+                            </div>
+                            <div class="bulletin-toggle-icon">+</div>
                         </div>
-                        <div class="bulletin-content">
-                            <h3>2025年灵比中文学校羽毛球趣味活动精彩回顾——活力绽放的周末午后</h3>
-                            <div class="date">May 18, 2025</div>
+                        <div class="bulletin-body">
+                            <div class="bulletin-body-inner">
+                                <p>2025年5月，灵比中文学校举办了一场别开生面的羽毛球趣味活动。同学和家长们挥洒汗水，在欢声笑语中度过了一个充满活力的周末午后。</p>
+                                <p>活动不仅锻炼了身体，也增进了彼此之间的了解与友谊。期待未来有更多这样的精彩活动！</p>
+                                <div class="event-gallery">
+                                    <div class="event-gallery-item"><img src="Assets/Bulletin/badminton-1.jpg" alt="羽毛球活动1"></div>
+                                    <div class="event-gallery-item"><img src="Assets/Bulletin/badminton-2.jpg" alt="羽毛球活动2"></div>
+                                    <div class="event-gallery-item"><img src="Assets/Bulletin/badminton-3.jpg" alt="羽毛球活动3"></div>
+                                    <div class="event-gallery-item"><img src="Assets/Bulletin/badminton-4.jpg" alt="羽毛球活动4"></div>
+                                    <div class="event-gallery-item"><img src="Assets/Bulletin/badminton-5.jpg" alt="羽毛球活动5"></div>
+                                </div>
+                                <p class="event-gallery-caption">羽毛球趣味活动精彩回顾</p>
+                            </div>
                         </div>
-                    </a>
+                    </div>
 
                 </div>
             </div>
@@ -470,6 +663,24 @@
         document.querySelectorAll('.main-nav a').forEach(link => {
             link.addEventListener('click', () => {
                 mainNav.classList.remove('open');
+            });
+        });
+
+        // Bulletin accordion toggle
+        document.querySelectorAll('.bulletin-header').forEach(header => {
+            header.addEventListener('click', () => {
+                const item = header.closest('.bulletin-item');
+                const isOpen = item.classList.contains('open');
+                
+                // Close all other items
+                document.querySelectorAll('.bulletin-item.open').forEach(openItem => {
+                    if (openItem !== item) {
+                        openItem.classList.remove('open');
+                    }
+                });
+                
+                // Toggle current item
+                item.classList.toggle('open');
             });
         });
     </script>
